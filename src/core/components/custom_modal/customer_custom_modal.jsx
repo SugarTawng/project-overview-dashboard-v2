@@ -11,7 +11,7 @@ import {
 import { Clear } from "@mui/icons-material";
 import { ConvertDateTime } from "../../utils/core_utils";
 
-const ProjectCustomModal = ({ data, openModal, handleCloseModal }) => {
+const CustomerCustomModal = ({ data, openModal, handleCloseModal }) => {
   console.log(data);
   return (
     <Modal open={openModal} onClose={handleCloseModal}>
@@ -35,7 +35,7 @@ const ProjectCustomModal = ({ data, openModal, handleCloseModal }) => {
           alignItems="center"
         >
           <Typography variant="h4" component="h2">
-            Project Details
+            Customer Details
           </Typography>
           <Button variant="text" size="large" onClick={handleCloseModal}>
             <Clear style={{ color: "#616161" }} />
@@ -45,8 +45,8 @@ const ProjectCustomModal = ({ data, openModal, handleCloseModal }) => {
         <Grid container spacing={1}>
           <Grid item spacing={3}>
             <TextField
-              label="Project Name"
-              value={data["name"]}
+              label="First Name"
+              value={data["first_name"]}
               InputProps={{
                 readOnly: true,
               }}
@@ -54,8 +54,8 @@ const ProjectCustomModal = ({ data, openModal, handleCloseModal }) => {
           </Grid>
           <Grid item spacing={3}>
             <TextField
-              label="Address"
-              value={data["address"]}
+              label="Last Name"
+              value={data["last_name"]}
               InputProps={{
                 readOnly: true,
               }}
@@ -100,4 +100,4 @@ const ProjectCustomModal = ({ data, openModal, handleCloseModal }) => {
   );
 };
 
-export default ProjectCustomModal;
+export default CustomerCustomModal;
