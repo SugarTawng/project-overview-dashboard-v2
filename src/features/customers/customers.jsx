@@ -105,7 +105,6 @@ const Customers = () => {
                             tabIndex={-1}
                             key={index}
                           >
-                            <TableCell key={index}>{index}</TableCell>
                             <TableCell key={index}>
                               {`${row["first_name"]} ${row["last_name"]}`}
                             </TableCell>

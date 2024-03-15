@@ -105,7 +105,6 @@ const Notifications = () => {
                             tabIndex={-1}
                             key={index}
                           >
-                            <TableCell key={index}>{index}</TableCell>
                             <TableCell key={index}>
                               {`${row["title"]}`}
                             </TableCell>
