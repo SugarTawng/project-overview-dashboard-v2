@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { Info, DeleteForever } from "@mui/icons-material";
 import { baseUrl, accessToken } from "../../core/constants/constants";
-import UserCustomModal from "../../core/components/custom_modal/payment_process_custom_modal";
+import UserCustomModal from "./components/edit_payment_process_custom_modal";
 
 const PaymentProcesses = () => {
   const [page, setPage] = useState(0);
@@ -31,32 +31,30 @@ const PaymentProcesses = () => {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          baseUrl + "/auth/paymentMethodProcess",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              access_token: accessToken,
-            },
-          }
-        );
-        if (response.data) {
-          console.log("response", response.data.data);
-          // Thực hiện map trực tiếp và lưu vào biến userData
-          setUsersData(response.data.data.map((data) => ({ ...data })));
-        } else {
-          // Xử lý khi response không có dữ liệu
-          setUsersData([]); // Đảm bảo userData không bao giờ là null
-        }
-      } catch (error) {
-        // Xử lý lỗi trong quá trình gửi request
-        setUsersData([]); // Đảm bảo userData không bao giờ là null
-      }
-    };
     fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(baseUrl + "/auth/paymentMethodProcess", {
+        headers: {
+          "Content-Type": "application/json",
+          access_token: accessToken,
+        },
+      });
+      if (response.data) {
+        console.log("response", response.data.data);
+        // Thực hiện map trực tiếp và lưu vào biến userData
+        setUsersData(response.data.data.map((data) => ({ ...data })));
+      } else {
+        // Xử lý khi response không có dữ liệu
+        setUsersData([]); // Đảm bảo userData không bao giờ là null
+      }
+    } catch (error) {
+      // Xử lý lỗi trong quá trình gửi request
+      setUsersData([]); // Đảm bảo userData không bao giờ là null
+    }
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -72,7 +70,10 @@ const PaymentProcesses = () => {
     setOpenModal(true);
   };
 
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModal = () => {
+    fetchData();
+    setOpenModal(false);
+  };
 
   return (
     <>

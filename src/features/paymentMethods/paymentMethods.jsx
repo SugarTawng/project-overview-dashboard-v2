@@ -15,14 +15,16 @@ import {
 } from "@mui/material";
 import { Info, DeleteForever } from "@mui/icons-material";
 import { baseUrl, accessToken } from "../../core/constants/constants";
-import PaymentMethodCustomModal from "../../core/components/custom_modal/payment_method_custom_modal";
+import PaymentMethodCustomModal from "./components/edit_payment_method_custom_modal";
 
 const PaymentMethod = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [paymentMethodsData, setPaymentMethodsData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-  const [paymentMethodDataForModal, setPaymentMethodDataForModal] = useState({});
+  const [paymentMethodDataForModal, setPaymentMethodDataForModal] = useState(
+    {}
+  );
   const columns = [
     { id: "method_name", label: "Method name" },
     { id: "total_price", label: "Total price" },
@@ -30,28 +32,29 @@ const PaymentMethod = () => {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(baseUrl + "/auth/paymentMethod", {
-          headers: {
-            "Content-Type": "application/json",
-            access_token: accessToken,
-          },
-        });
-        if (response.data) {
-          // Thực hiện map trực tiếp và lưu vào biến PaymentMethodData
-          setPaymentMethodsData(response.data.data.map((data) => ({ ...data })));
-        } else {
-          // Xử lý khi response không có dữ liệu
-          setPaymentMethodsData([]); // Đảm bảo PaymentMethodData không bao giờ là null
-        }
-      } catch (error) {
-        // Xử lý lỗi trong quá trình gửi request
-        setPaymentMethodsData([]); // Đảm bảo PaymentMethodData không bao giờ là null
-      }
-    };
     fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(baseUrl + "/auth/paymentMethod", {
+        headers: {
+          "Content-Type": "application/json",
+          access_token: accessToken,
+        },
+      });
+      if (response.data) {
+        // Thực hiện map trực tiếp và lưu vào biến PaymentMethodData
+        setPaymentMethodsData(response.data.data.map((data) => ({ ...data })));
+      } else {
+        // Xử lý khi response không có dữ liệu
+        setPaymentMethodsData([]); // Đảm bảo PaymentMethodData không bao giờ là null
+      }
+    } catch (error) {
+      // Xử lý lỗi trong quá trình gửi request
+      setPaymentMethodsData([]); // Đảm bảo PaymentMethodData không bao giờ là null
+    }
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -67,7 +70,10 @@ const PaymentMethod = () => {
     setOpenModal(true);
   };
 
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseModal = () => {
+    fetchData();
+    setOpenModal(false);
+  };
 
   return (
     <>

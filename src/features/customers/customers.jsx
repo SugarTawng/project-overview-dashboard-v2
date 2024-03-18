@@ -15,13 +15,15 @@ import {
 } from "@mui/material";
 import { Info, DeleteForever } from "@mui/icons-material";
 import { baseUrl, accessToken } from "../../core/constants/constants";
-import CustomerCustomModal from "../../core/components/custom_modal/customer_custom_modal";
+import EditCustomerCustomModal from "./components/edit_customer_custom_modal";
+import DeleteCustomerCustomModal from "./components/delete_customer_custom_modal";
 
 const Customers = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [customersData, setCustomersData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [customerDataForModal, setCustomerDataForModal] = useState({});
   const columns = [
     { id: "name", label: "Name" },
@@ -31,9 +33,12 @@ const Customers = () => {
   ];
 
   useEffect(() => {
+		fetchData();
+	}, []);
+
     const fetchData = async () => {
       try {
-        const response = await axios.get(baseUrl + "/auth/customer/13", {
+        const response = await axios.get(baseUrl + "/auth/customer/46", {
           headers: {
             "Content-Type": "application/json",
             access_token: accessToken,
@@ -51,8 +56,23 @@ const Customers = () => {
         setCustomersData([]); // Đảm bảo CustomerData không bao giờ là null
       }
     };
-    fetchData();
-  }, []);
+
+    const setDeletedForCustomer = async (isDeleted, customerData) => {
+      try {
+        await axios.put(
+          baseUrl + `/auth/account/${customerData["id"]}`,
+          { ...customerData, deleted: isDeleted },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              access_token: accessToken,
+            },
+          }
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -63,12 +83,26 @@ const Customers = () => {
     setPage(0);
   };
 
-  const handleOpenModal = (CustomerData) => {
-    setCustomerDataForModal(CustomerData);
+  const handleOpenModal = (customerData) => {
+    setCustomerDataForModal(customerData);
     setOpenModal(true);
   };
 
-  const handleCloseModal = () => setOpenModal(false);
+  const handleCloseEditModal = () => {
+		fetchData();
+		setOpenModal(false);
+	};
+
+  const handleOpenDeleteModal = async (customerData) => {
+		await setDeletedForCustomer(true, customerData);
+		setCustomerDataForModal(customerData);
+		setOpenDeleteModal(true);
+	};
+
+  const handleCloseDeleteModal = async () => {
+		fetchData();
+		setOpenDeleteModal(false);
+	};
 
   return (
     <>
@@ -122,14 +156,11 @@ const Customers = () => {
                                   <Info style={{ color: "#616161" }} />
                                 </Button>
                                 <Button
-                                  variant="text"
-                                  size="large"
-                                  onClick={() => {
-                                    alert("clicked");
-                                  }}
-                                >
-                                  <DeleteForever style={{ color: "#f44336" }} />
-                                </Button>
+																	variant="text"
+																	size="large"
+																	onClick={() => handleOpenDeleteModal(row)}>
+																	<DeleteForever style={{ color: "#f44336" }} />
+																</Button>
                               </Stack>
                             </TableCell>
                           </TableRow>
@@ -151,11 +182,16 @@ const Customers = () => {
           </Box>
         </Grid>
       </Grid>
-      <CustomerCustomModal
+      <EditCustomerCustomModal
         data={customerDataForModal}
         openModal={openModal}
-        handleCloseModal={handleCloseModal}
+        handleCloseModal={handleCloseEditModal}
       />
+      <DeleteCustomerCustomModal
+				data={customerDataForModal}
+				openModal={openDeleteModal}
+				handleCloseModal={handleCloseDeleteModal}
+			/>
     </>
   );
 };
